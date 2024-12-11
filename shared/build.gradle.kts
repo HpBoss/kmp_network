@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
 }
 
 kotlin {
@@ -15,7 +15,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -26,27 +26,41 @@ kotlin {
             isStatic = true
         }
     }
-    
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        browser {
-            val rootDirPath = project.rootDir.path
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(rootDirPath)
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
+
+    js(IR) {
+        browser()
     }
-    
+
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            with(libs) {
+                implementation(kotlinx.serialization.json)
+                implementation(bundles.ktor)
+                api(bundles.decompose)
+                implementation(essenty.lifecycle)
+            }
+        }
+
+        androidMain.dependencies {
+            with(libs) {
+                implementation(ktor.client.android)
+            }
+        }
+
+        iosMain.dependencies {
+            with(libs) {
+                implementation(ktor.client.darwin)
+            }
+        }
+
+        jsMain.dependencies {
+            with(compose) {
+                implementation(html.core)
+            }
+            with(libs) {
+                implementation(ktor.client.js)
+                implementation(ktor.client.json.js)
+            }
         }
     }
 }
