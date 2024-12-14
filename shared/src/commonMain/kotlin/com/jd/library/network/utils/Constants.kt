@@ -39,4 +39,6 @@ object Constants {
     const val RESPONSE_DECRYPT_RSA: Int = 1 shl 4
     // 请求超时时间（毫秒）
     const val TIMEOUT: Long = 20 * 1000
+
+    const val SLASH = "/"
 }

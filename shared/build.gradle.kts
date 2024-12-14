@@ -39,6 +39,7 @@ kotlin {
                 implementation(bundles.ktor)
                 api(bundles.decompose)
                 implementation(essenty.lifecycle)
+                implementation(kotlinx.datetime)
             }
         }
 
