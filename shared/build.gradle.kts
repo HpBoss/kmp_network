@@ -35,6 +35,7 @@ kotlin {
         commonMain.dependencies {
             with(libs) {
                 implementation(kotlinx.serialization.json)
+                implementation(kotlinx.coroutines.core)
                 implementation(bundles.ktor)
                 api(bundles.decompose)
                 implementation(essenty.lifecycle)
@@ -43,7 +44,8 @@ kotlin {
 
         androidMain.dependencies {
             with(libs) {
-                implementation(ktor.client.android)
+                implementation(ktor.client.okhttp)
+                implementation(kotlinx.coroutines.android)
             }
         }
 
